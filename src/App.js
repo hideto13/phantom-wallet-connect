@@ -1,10 +1,24 @@
+import { useEffect } from 'react'
+import { usePhantom } from './hooks/usePhantom'
 import './App.css'
 
 function App() {
+  const { isConnected, connect } = usePhantom()
+
+  useEffect(() => {
+    if (window.solana || window.phantom) connect()
+  }, [])
+
   return (
     <div className='App'>
       <header className='App-header'>
-        <p>Wallet connect</p>
+        {isConnected ? (
+          <>okay</>
+        ) : (
+          <button className='App-button' onClick={connect}>
+            Connect Wallet
+          </button>
+        )}
       </header>
     </div>
   )
