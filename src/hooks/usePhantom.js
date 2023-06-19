@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Connection, clusterApiUrl } from '@solana/web3.js'
+import { Connection, clusterApiUrl, Transaction } from '@solana/web3.js'
 
 export const usePhantom = () => {
   const [isConnected, setIsConnected] = useState(false)
@@ -28,6 +28,14 @@ export const usePhantom = () => {
     }
   }
 
+  async function getSign() {
+    const provider = getProvider()
+    const message = `Some message`
+    const encodedMessage = new TextEncoder().encode(message)
+    const signedMessage = await provider.signMessage(encodedMessage, 'utf8')
+    console.log(signedMessage)
+  }
+
   async function getBalance() {
     const connection = new Connection(clusterApiUrl('devnet'), 'confirmed')
     connection.getBalance(address).then(res => setBalance(res))
@@ -42,5 +50,6 @@ export const usePhantom = () => {
     isConnected,
     connect,
     balance,
+    getSign,
   }
 }
