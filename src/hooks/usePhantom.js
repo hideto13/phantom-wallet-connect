@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { Connection, clusterApiUrl } from '@solana/web3.js'
 
 export const usePhantom = () => {
   const [isConnected, setIsConnected] = useState(false)
   const [address, setAddress] = useState('')
+  const [balance, setBalance] = useState(0)
 
   const getProvider = () => {
     if ('phantom' in window) {
@@ -18,16 +20,27 @@ export const usePhantom = () => {
     if (!window.solana) return setTimeout(connect, 1000)
     const provider = getProvider()
     try {
-      await provider.connect()
+      const resp = await provider.connect()
+      setAddress(resp.publicKey)
       setIsConnected(true)
     } catch (err) {
       console.log(err)
     }
   }
 
+  async function getBalance() {
+    const connection = new Connection(clusterApiUrl('devnet'), 'confirmed')
+    connection.getBalance(address).then(res => setBalance(res))
+  }
+
+  useEffect(() => {
+    if (address) getBalance()
+  }, [address])
+
   return {
     address,
     isConnected,
     connect,
+    balance,
   }
 }

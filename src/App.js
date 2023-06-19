@@ -3,7 +3,7 @@ import { usePhantom } from './hooks/usePhantom'
 import './App.css'
 
 function App() {
-  const { isConnected, connect } = usePhantom()
+  const { isConnected, connect, address, balance } = usePhantom()
 
   useEffect(() => {
     if (window.solana || window.phantom) connect()
@@ -13,7 +13,10 @@ function App() {
     <div className='App'>
       <header className='App-header'>
         {isConnected ? (
-          <>okay</>
+          <>
+            <p>Address: {address.toBase58()}</p>
+            <p>Balance: {balance}</p>
+          </>
         ) : (
           <button className='App-button' onClick={connect}>
             Connect Wallet
